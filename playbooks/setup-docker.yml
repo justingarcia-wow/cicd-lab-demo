@@ -1,0 +1,25 @@
+---
+- name: Instalar Docker en los nodos
+  hosts: nodos
+  become: true
+  tasks:
+    - name: Actualizar cache de apt
+      apt:
+        update_cache: yes
+
+    - name: Instalar Docker
+      apt:
+        name: docker.io
+        state: present
+
+    - name: Iniciar y habilitar Docker
+      service:
+        name: docker
+        state: started
+        enabled: true
+
+    - name: Agregar usuario ubuntu al grupo docker
+      user:
+        name: ubuntu
+        groups: docker
+        append: yes

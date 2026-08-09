@@ -1,0 +1,5 @@
+*.tar
+__pycache__/
+*.pyc
+.vscode/
+inventory/hosts.ini.local

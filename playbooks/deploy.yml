@@ -1,0 +1,25 @@
+---
+- name: Desplegar demo-app en los nodos
+  hosts: nodos
+  become: true
+  vars:
+    imagen_tar: "/tmp/demo-app-{{ app_version }}.tar"
+    imagen: "demo-app:{{ app_version }}"
+
+  tasks:
+    - name: Copiar imagen al nodo
+      copy:
+        src: "{{ imagen_local_tar }}"
+        dest: "{{ imagen_tar }}"
+
+    - name: Cargar imagen en Docker
+      command: "docker load -i {{ imagen_tar }}"
+
+    - name: Detener contenedor anterior si existe
+      command: "docker rm -f demo-app"
+      ignore_errors: true
+
+    - name: Levantar contenedor nuevo
+      command: >
+        docker run -d --name demo-app -p 5000:5000
+        -e APP_VERSION={{ app_version }} {{ imagen }}
