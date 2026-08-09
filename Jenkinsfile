@@ -4,7 +4,6 @@ pipeline {
     environment {
         APP_VERSION = "v${BUILD_NUMBER}"
         IMAGE_NAME  = "demo-app"
-        TAR_PATH    = "/home/ubuntu/cicd-lab/demo-app/${IMAGE_NAME}-${APP_VERSION}.tar"
     }
 
     stages {
@@ -34,7 +33,7 @@ pipeline {
         stage('Deploy con Ansible') {
             steps {
                 sh """
-                ansible-playbook -i inventory/hosts.ini.local playbooks/deploy.yml \
+                ansible-playbook -i /etc/cicd-lab/hosts.ini playbooks/deploy.yml \
                   --extra-vars "app_version=${APP_VERSION} imagen_local_tar=${WORKSPACE}/demo-app/${IMAGE_NAME}-${APP_VERSION}.tar"
                 """
             }
@@ -49,7 +48,7 @@ pipeline {
             echo "Algo falló, revisa el log del pipeline"
         }
         always {
-            sh "sudo rm -f demo-app/${IMAGE_NAME}-${APP_VERSION}.tar"
+            sh "sudo rm -f demo-app/${IMAGE_NAME}-${APP_VERSION}.tar || true"
         }
     }
 }
